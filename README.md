@@ -1,6 +1,6 @@
 # Frontend Interview Challenge
 
-Your mission, if you choose to accept it, is to demonstrate your Frontend skills using this premade repository
+Your mission, if you choose to accept it, is to demonstrate your Frontend skills using this premade repository.
 We have a simple checklist of items for you to complete.
 Items will range from from varying skill levels.
 We ask that you comment your thoughts and decision making, so we get a good idea of how you think out solutions to the problems.
@@ -37,9 +37,10 @@ User Stories
 - [Medium] As a data provider, you are sending us too many invalid ETH addresses. Please validate the address before requesting our API.
   There's an easy-to-use package that supports [validating Ethereum addresses](https://www.npmjs.com/package/multicoin-address-validator). This is a NodeJS library that will require extra effort to use with Webpack, here's a hint here: https://viglucci.io/how-to-polyfill-buffer-with-webpack-5
   In addition to validation, please add some feedback using the existing AntDesign Form to the user that their input is invalid.
-- [Medium] As a user, I want to see more than just the last 10 transactions an address has made.
+- [Hard] As a user, I want to see more than just the last 10 transactions an address has made.
   We need to be able to show more transactions, but Etherscan does not provide a total.
   Add a way to paginate this table.
+  Please keep in mind that total number of transactions of an address can be very large.
 - [Hard] As a user, I want to involve my colleagues in what I'm working on. I want to be able to link someone to an address that would automatically request the balance and transactions.
   Use the `/address/:address` route to build a way that when a user selects an address to view the transactions, the URL will update, so that the user can quickly share it with someone else, that will automatically: Add the address and select it (which should trigger to pull down the transactions)
 
