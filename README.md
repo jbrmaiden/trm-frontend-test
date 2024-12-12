@@ -5,6 +5,8 @@ We have a simple checklist of items for you to complete.
 Items will range from from varying skill levels.
 We ask that you comment your thoughts and decision making, so we get a good idea of how you think out solutions to the problems.
 
+Please do not spend more than 4 hours on this challenge. Tests are not required. We will be evaluating your ability to communicate your thoughts, implement pragmatic working solutions, and your attention to detail. 
+
 You will be using the [Etherscan API](https://docs.etherscan.io/api-endpoints/accounts) to fetch Address Balances and Transactions.
 You may check the validity of your response and the proper way to display any data using their web application: https://etherscan.io/
 
