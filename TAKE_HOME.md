@@ -1,9 +1,9 @@
-# Frontend Take-Home Assignment (2–3 hours)
+# Frontend Take-Home Assignment
 
 ## Overview
-This project provides a **production-ready foundation** for monitoring Ethereum address balances. Your task is to extend this application with **advanced features** that demonstrate your frontend engineering skills.
+This project provides a production-ready foundation for monitoring Ethereum address balances. Your task is to extend this application with advanced features that demonstrate your frontend engineering skills.
 
-## Current State ✅
+## Current State
 The application already includes:
 - Professional React + TypeScript architecture
 - Real-time ETH balance and price fetching
@@ -12,15 +12,14 @@ The application already includes:
 - Responsive design and accessibility features
 - Testing infrastructure and code quality tools
 
-## Your Mission 🎯
-Choose **3 features** from the categories below to implement within **3 hours**. Focus on **quality over quantity** – we want to see your best work.
+## Your Mission
+Choose **3 features** from the categories below to implement. Focus on **quality over quantity** – we want to see your best work.
 
 ---
 
 ## Core Features (Pick 2)
 
-### 🏗️ **A. Dynamic Address Management**
-**Estimated Time: 45-60 minutes**
+### **A. Dynamic Address Management**
 
 Implement the ability to add and remove addresses dynamically:
 
@@ -34,8 +33,7 @@ Implement the ability to add and remove addresses dynamically:
 
 ---
 
-### 📊 **B. Advanced Data Table with Pagination**
-**Estimated Time: 60-75 minutes**
+### **B. Advanced Data Table with Pagination**
 
 Replace the card grid with a sophisticated data table:
 
@@ -49,14 +47,13 @@ Replace the card grid with a sophisticated data table:
 
 ---
 
-### 🎨 **C. Real-time Dashboard Enhancements**
-**Estimated Time: 45-60 minutes**
+### **C. Real-time Dashboard Enhancements**
 
 Add interactive dashboard features:
 
 - **Live Updates**: Auto-refresh data every 30 seconds with subtle indicators
 - **Balance Alerts**: Set threshold alerts for address balance changes
-- **Historical Tracking**: Show balance change indicators (↑ ↓) since last refresh
+- **Historical Tracking**: Show balance change indicators since last refresh
 - **Summary Statistics**: Average balance, highest/lowest exposure
 - **Interactive Charts**: Simple bar/pie chart showing balance distribution
 
@@ -66,8 +63,7 @@ Add interactive dashboard features:
 
 ## Advanced Features (Pick 1)
 
-### 🚀 **D. Performance & Caching**
-**Estimated Time: 60-75 minutes**
+### **D. Performance & Caching**
 
 Implement advanced performance optimizations:
 
@@ -81,8 +77,7 @@ Implement advanced performance optimizations:
 
 ---
 
-### 🎭 **E. Theme System & Dark Mode**
-**Estimated Time: 45-60 minutes**
+### **E. Theme System & Dark Mode**
 
 Create a comprehensive theming system:
 
@@ -96,8 +91,7 @@ Create a comprehensive theming system:
 
 ---
 
-### 🧪 **F. Testing & Quality**
-**Estimated Time: 60-90 minutes**
+### **F. Testing & Quality**
 
 Demonstrate testing excellence:
 
@@ -113,14 +107,14 @@ Demonstrate testing excellence:
 
 ## Stretch Goals (Time Permitting)
 
-### 🎪 **G. Micro-Interactions & Polish**
+### **G. Micro-Interactions & Polish**
 - Smooth animations for data updates
 - Loading skeletons during transitions
 - Hover effects and micro-feedback
 - Toast notifications for actions
 - Keyboard shortcuts for power users
 
-### 🔗 **H. Advanced Routing**
+### **H. Advanced Routing**
 - Deep links with address filtering in URL
 - Browser back/forward support
 - Route-based state management
@@ -128,7 +122,7 @@ Demonstrate testing excellence:
 
 ---
 
-## Evaluation Criteria 📋
+## Evaluation Criteria
 
 We'll evaluate your submission on:
 
@@ -139,7 +133,7 @@ We'll evaluate your submission on:
 5. **Testing**: Quality and coverage of tests (if implemented)
 6. **Documentation**: Clear explanations of decisions and trade-offs
 
-## Submission Guidelines 📤
+## Submission Guidelines
 
 1. **Document Your Approach**: Add a `DECISIONS.md` file explaining:
    - Which features you chose and why
@@ -153,7 +147,7 @@ We'll evaluate your submission on:
 
 4. **README Updates**: Update the README with your new features
 
-## Success Tips 💡
+## Success Tips
 
 - **Start Simple**: Get basic functionality working before adding polish
 - **Leverage Existing**: Build upon the excellent foundation provided
@@ -163,6 +157,6 @@ We'll evaluate your submission on:
 
 ---
 
-**Good luck! We're excited to see your frontend engineering skills in action.** 🚀
+We look forward to reviewing your submission and discussing your implementation choices.
 
 > **Note**: The existing codebase demonstrates production-ready practices. Your additions should maintain this quality standard. 

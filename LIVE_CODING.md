@@ -1,14 +1,14 @@
 # Live Coding Interview Guide
 
-**🔒 CONFIDENTIAL - INTERVIEWER ONLY**
+**CONFIDENTIAL - INTERVIEWER ONLY**
 
-## 📋 Session Overview
+## Session Overview
 - **Duration**: 45 minutes
 - **Setup**: 5 minutes
 - **Challenge**: 35 minutes  
 - **Wrap-up**: 5 minutes
 
-## 🎯 The Challenge: Search & Filter System
+## The Challenge: Search & Filter System
 
 ### Objective
 Build a search and filter system that allows users to find addresses by balance ranges, search text, and sort results.
@@ -25,7 +25,29 @@ Build a search and filter system that allows users to find addresses by balance 
 
 ---
 
-## 🔍 What Separates L3 from L5
+## Target UI Layout
+
+The target interface should include these key elements arranged in a clean, intuitive layout:
+
+### **Filter Controls (Top Section)**
+- **Search Input**: Full-width search bar with placeholder "Search addresses..."
+- **Balance Range**: Two number inputs labeled "Min" and "Max" for filtering by ETH balance
+- **Sort Dropdown**: Select with options like "Balance (High to Low)", "Balance (Low to High)", "Address (A-Z)"
+- **Clear Filters Button**: Reset all filters to default state
+- **Results Counter**: Display "Showing X of Y addresses" below the controls
+
+### **Address Cards Grid (Main Content)**
+- **Responsive Grid**: 3-column layout on desktop, adapting to smaller screens
+- **Card Content**: Each card displays:
+  - Truncated address (e.g., "0x1234...5678")
+  - ETH balance (e.g., "15.23 ETH") 
+  - USD value (e.g., "$24,567.89")
+- **Visual Hierarchy**: Clear typography and spacing between elements
+- **Interactive States**: Hover effects and clean card borders
+
+---
+
+## What Separates L3 from L5
 
 ### **L3 Candidate** will:
 - Build basic search input with `onChange` handler
@@ -42,7 +64,7 @@ Build a search and filter system that allows users to find addresses by balance 
 
 ---
 
-## 🚀 Implementation Areas
+## Implementation Areas
 
 ### **Phase 1: Basic Search (10 minutes)**
 *"Let's start with a search bar that filters addresses by text"*
@@ -130,28 +152,28 @@ const sortedAddresses = useMemo(() => {
 
 ---
 
-## 🎯 Evaluation Criteria
+## Evaluation Criteria
 
-### **🌟 L5+ Indicators**
+### **L5+ Indicators**
 - **Performance**: Uses `useMemo`, `useCallback`, debouncing
 - **Architecture**: Clean component structure, reusable hooks
 - **Types**: Proper TypeScript usage with enums/interfaces
 - **UX**: Loading states, input validation, clear feedback
 - **Edge Cases**: Empty states, invalid inputs, boundary conditions
 
-### **✅ L4 Indicators**
+### **L4 Indicators**
 - **Functionality**: All features work correctly
 - **Code Quality**: Clean, readable implementation
 - **State Management**: Proper React patterns
 - **User Experience**: Good basic UX
 
-### **⚠️ L3 Indicators**
+### **L3 Indicators**
 - **Basic Implementation**: Features work but basic approach
 - **Limited Optimization**: No performance considerations
 - **Simple State**: Basic useState usage
 - **Minimal Edge Cases**: Doesn't handle edge cases well
 
-### **❌ Below L3**
+### **Below L3**
 - **Incomplete**: Can't implement basic functionality
 - **Poor Patterns**: Doesn't use React properly
 - **No Error Handling**: Breaks on invalid input
@@ -159,7 +181,7 @@ const sortedAddresses = useMemo(() => {
 
 ---
 
-## 🛠️ Interviewer Guide
+## Interviewer Guide
 
 ### **Setup (5 minutes)**
 - Show them the current address cards
@@ -191,16 +213,16 @@ const sortedAddresses = useMemo(() => {
 
 ---
 
-## 🚨 Red Flags & Green Flags
+## Red Flags & Green Flags
 
-### **🚨 Red Flags**
+### **Red Flags**
 - No consideration for performance
 - Doesn't handle invalid input
 - Can't explain their approach
 - Writes code without thinking
 - Struggles with basic React patterns
 
-### **🎯 Green Flags**
+### **Green Flags**
 - Thinks about performance upfront
 - Handles edge cases naturally
 - Explains their approach clearly
@@ -209,7 +231,7 @@ const sortedAddresses = useMemo(() => {
 
 ---
 
-## 📝 Sample Implementation Structure
+## Sample Implementation Structure
 
 ```typescript
 // Expected L5 component structure
@@ -272,4 +294,4 @@ const AddressFilter: React.FC = () => {
 
 ---
 
-**🎯 Success Indicator**: An L5 candidate should naturally think about performance, create clean abstractions, and handle edge cases without prompting, while clearly explaining their architectural decisions. 
+**Success Indicator**: An L5 candidate should naturally think about performance, create clean abstractions, and handle edge cases without prompting, while clearly explaining their architectural decisions. 
