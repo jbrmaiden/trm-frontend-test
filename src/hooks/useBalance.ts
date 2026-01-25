@@ -25,6 +25,7 @@ export function useBalance(address: string): UseQueryResult<string, ApiError> {
           action: 'balance',
           address,
           tag: 'latest',
+          chainid: '1',
         };
 
         // Only add API key if available
