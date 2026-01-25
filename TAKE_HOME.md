@@ -95,8 +95,8 @@ Create a comprehensive theming system:
 
 Demonstrate testing excellence:
 
-- **Component Tests**: Test ExposurePage with different states
-- **Hook Tests**: Comprehensive tests for useBalance and usePrice with mocks
+- **Component Tests**: Test ExposurePage with different states (done)
+- **Hook Tests**: Comprehensive tests for useBalance and usePrice with mocks (done)
 - **Integration Tests**: Full user flow testing with MSW
 - **Accessibility Tests**: Automated a11y testing with jest-axe
 - **Performance Tests**: Bundle size and rendering performance checks

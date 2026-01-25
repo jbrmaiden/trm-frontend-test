@@ -1,6 +1,11 @@
 import React from 'react';
 import type { ReactElement } from 'react';
-import { render, type RenderOptions } from '@testing-library/react';
+import {
+  render,
+  renderHook as rtlRenderHook,
+  type RenderOptions,
+  type RenderHookOptions,
+} from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { useSanctionedStore } from '@/stores/sanctionedStore';
@@ -16,22 +21,24 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
 /**
  * Create a new QueryClient for each test to avoid state leakage
  */
-const createTestQueryClient = () => {
+export const createTestQueryClient = () => {
   return new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
         gcTime: 0,
+        refetchInterval: false,
       },
     },
   });
-}
+};
 
 /**
  * Test wrapper component that provides all necessary context providers
+ * Uses useState to keep QueryClient stable across re-renders
  */
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = createTestQueryClient();
+  const [queryClient] = React.useState(() => createTestQueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -40,7 +47,7 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
       </BrowserRouter>
     </QueryClientProvider>
   );
-}
+};
 
 /**
  * Custom render function that includes providers
@@ -89,9 +96,22 @@ export function getTestAddresses(): string[] {
   return useSanctionedStore.getState().addresses;
 }
 
+/**
+ * Custom renderHook function that includes providers
+ * @param callback - Hook to render
+ * @param options - Optional render hook options
+ */
+export const customRenderHook = <TProps, TResult>(
+  callback: (props: TProps) => TResult,
+  options?: Omit<RenderHookOptions<TProps>, 'wrapper'>
+) => {
+  return rtlRenderHook(callback, { wrapper: AllTheProviders, ...options });
+};
+
 // Re-export everything from testing-library
 export * from '@testing-library/react';
 export { customRender as render };
+export { customRenderHook as renderHook };
 
 // Re-export server for convenience in tests
 export { server } from './mocks/server';
