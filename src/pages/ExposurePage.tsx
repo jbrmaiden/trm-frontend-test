@@ -1,7 +1,7 @@
 import React from 'react';
 import { useBalance } from '../hooks/useBalance';
 import { usePrice } from '../hooks/usePrice';
-import { useSanctionedStore } from '../main';
+import { useSanctionedStore } from '@/stores/sanctionedStore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
