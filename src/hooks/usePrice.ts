@@ -17,6 +17,7 @@ export function usePrice(): UseQueryResult<number, ApiError> {
         const params: Record<string, string> = {
           module: 'stats',
           action: 'ethprice',
+          chainid: '1',
         };
 
         // Only add API key if available
