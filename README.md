@@ -4,7 +4,7 @@ A production-ready React & TypeScript foundation for monitoring Ethereum address
 
 ## Assignment Overview
 
-This project provides a complete, working application that includes professional-grade architecture, error handling, and user interface. You'll build upon this foundation to demonstrate senior-level frontend engineering skills.
+This project provides a complete, working application that includes professional-grade architecture, error handling, and user interface. You'll build upon this foundation to demonstrate your frontend engineering skills.
 
 **See `TAKE_HOME.md` for your specific assignment tasks.**
 
@@ -108,7 +108,7 @@ The base application includes:
 
 **See `TAKE_HOME.md` for detailed assignment instructions.**
 
-You'll choose 2-3 advanced features to implement, such as:
+You'll choose 3 features to implement, such as:
 - Dynamic address management with persistence
 - Advanced data table with pagination and sorting
 - Real-time dashboard enhancements

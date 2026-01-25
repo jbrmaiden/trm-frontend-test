@@ -105,23 +105,6 @@ Demonstrate testing excellence:
 
 ---
 
-## Stretch Goals (Time Permitting)
-
-### **G. Micro-Interactions & Polish**
-- Smooth animations for data updates
-- Loading skeletons during transitions
-- Hover effects and micro-feedback
-- Toast notifications for actions
-- Keyboard shortcuts for power users
-
-### **H. Advanced Routing**
-- Deep links with address filtering in URL
-- Browser back/forward support
-- Route-based state management
-- Shareable filtered views
-
----
-
 ## Evaluation Criteria
 
 We'll evaluate your submission on:
@@ -150,7 +133,7 @@ We'll evaluate your submission on:
 ## Success Tips
 
 - **Start Simple**: Get basic functionality working before adding polish
-- **Leverage Existing**: Build upon the excellent foundation provided
+- **Leverage Existing**: Build upon the foundation provided
 - **Focus on UX**: Small details make a big difference
 - **Performance Matters**: Consider how your changes affect app performance
 - **Ask Questions**: Clarify requirements if anything is unclear
