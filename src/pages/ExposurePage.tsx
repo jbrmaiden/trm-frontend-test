@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { AddAddressDialog } from '@/components/AddAddressDialog';
 import BigNumber from 'bignumber.js';
 
 const ExposurePage: React.FC = () => {
@@ -55,14 +56,16 @@ const ExposurePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            Sanctioned Address Exposure
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Monitor ETH balances and USD exposure across sanctioned addresses
-          </p>
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground sm:text-4xl mb-2">
+              Sanctioned Address Exposure
+            </h1>
+            <p className="text-muted-foreground text-base sm:text-lg">
+              Monitor ETH balances and USD exposure across sanctioned addresses
+            </p>
+          </div>
+          <AddAddressDialog />
         </div>
 
         {/* Total Exposure Card */}
@@ -90,61 +93,72 @@ const ExposurePage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Addresses Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {rows.map(({ address, eth, usd, isLoading, error }) => (
-            <Card key={address} className="hover:shadow-lg transition-shadow relative">
-              {/* Status indicator as a small dot in top-right corner */}
-              <div className="absolute top-3 right-3">
-                {isLoading ? (
-                  <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse" title="Loading" />
-                ) : error ? (
-                  <div className="w-3 h-3 rounded-full bg-red-500" title="Error loading data" />
-                ) : (
-                  <div className="w-3 h-3 rounded-full bg-green-500" title="Data loaded successfully" />
-                )}
-              </div>
-              
-              <CardHeader className="pb-3 pr-8">
-                <CardTitle className="text-sm font-mono break-all leading-tight">
-                  {address}
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">ETH Balance</span>
-                    <span className="font-semibold text-right">
-                      {isLoading ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        <span>{eth} ETH</span>
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">USD Value</span>
-                    <span className="font-semibold text-green-600 text-right">
-                      {isLoading ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        <span>${usd}</span>
-                      )}
-                    </span>
-                  </div>
-                  {error && (
-                    <div className="mt-2">
-                      <Badge variant="destructive" className="text-xs">
-                        Failed to load
-                      </Badge>
-                    </div>
+        {/* Addresses Grid or Empty State */}
+        {addresses.length === 0 ? (
+          <Card className="text-center py-12">
+            <CardContent className="pt-6">
+              <p className="text-muted-foreground mb-2">No addresses monitored</p>
+              <p className="text-sm text-muted-foreground">
+                Click &quot;+ Add Address&quot; to start monitoring an Ethereum address.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {rows.map(({ address, eth, usd, isLoading, error }) => (
+              <Card key={address} className="hover:shadow-lg transition-shadow relative">
+                {/* Status indicator as a small dot in top-right corner */}
+                <div className="absolute top-3 right-3">
+                  {isLoading ? (
+                    <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse" title="Loading" />
+                  ) : error ? (
+                    <div className="w-3 h-3 rounded-full bg-red-500" title="Error loading data" />
+                  ) : (
+                    <div className="w-3 h-3 rounded-full bg-green-500" title="Data loaded successfully" />
                   )}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                
+                <CardHeader className="pb-3 pr-8">
+                  <CardTitle className="text-sm font-mono break-all leading-tight">
+                    {address}
+                  </CardTitle>
+                </CardHeader>
+                
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">ETH Balance</span>
+                      <span className="font-semibold text-right">
+                        {isLoading ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          <span>{eth} ETH</span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">USD Value</span>
+                      <span className="font-semibold text-green-600 text-right">
+                        {isLoading ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          <span>${usd}</span>
+                        )}
+                      </span>
+                    </div>
+                    {error && (
+                      <div className="mt-2">
+                        <Badge variant="destructive" className="text-xs">
+                          Failed to load
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
