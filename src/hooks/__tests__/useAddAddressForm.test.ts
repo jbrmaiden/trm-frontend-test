@@ -116,7 +116,6 @@ describe('useAddAddressForm', () => {
       expect(result.current.error).toBeNull();
       expect(result.current.isOpen).toBe(false);
 
-      // Verify address was added to store (normalized to lowercase)
       const storedAddresses = getTestAddresses();
       expect(storedAddresses).toContain(VALID_ADDRESS.toLowerCase());
     });

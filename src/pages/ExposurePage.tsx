@@ -1,22 +1,22 @@
 import React from 'react';
-import { useBalance } from '../hooks/useBalance';
 import { usePrice } from '../hooks/usePrice';
+import { useAddressesBalances } from '../hooks/useAddressesBalances';
 import { useSanctionedStore } from '@/stores/sanctionedStore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AddAddressDialog } from '@/components/AddAddressDialog';
+import AddressCard from '@/components/AddressCard';
 import BigNumber from 'bignumber.js';
 
 const ExposurePage: React.FC = () => {
   const addresses = useSanctionedStore((s) => s.addresses);
   const { data: price, isLoading: priceLoading, error: priceError } = usePrice();
 
-  const balances = addresses.map((address) => {
-    const { data, isLoading, error } = useBalance(address);
-    return { address, data, isLoading, error };
-  });
+  // Fetch all balances for total calculation
+  // This uses the same query keys as AddressCard components, so data is shared via cache
+  const balanceQueries = useAddressesBalances(addresses);
 
   if (priceLoading) {
     return (
@@ -40,15 +40,13 @@ const ExposurePage: React.FC = () => {
     );
   }
 
-  const rows = balances.map(({ address, data, isLoading, error }) => {
-    const eth = data ? new BigNumber(data).toFormat(6) : '—';
-    const usd = data ? new BigNumber(data).multipliedBy(price!).toFormat(2) : '—';
-    return { address, eth, usd, isLoading, error };
-  });
-
-  const totalUsd = rows
-    .reduce((sum, row) => {
-      if (row.usd !== '—') return sum.plus(new BigNumber(row.usd.replace(/,/g, '')));
+  // Calculate total USD exposure from all balances
+  const totalUsd = balanceQueries
+    .reduce((sum, query) => {
+      if (query.data && price) {
+        const usdValue = new BigNumber(query.data).multipliedBy(price);
+        return sum.plus(usdValue);
+      }
       return sum;
     }, new BigNumber(0))
     .toFormat(2);
@@ -105,57 +103,8 @@ const ExposurePage: React.FC = () => {
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {rows.map(({ address, eth, usd, isLoading, error }) => (
-              <Card key={address} className="hover:shadow-lg transition-shadow relative">
-                {/* Status indicator as a small dot in top-right corner */}
-                <div className="absolute top-3 right-3">
-                  {isLoading ? (
-                    <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse" title="Loading" />
-                  ) : error ? (
-                    <div className="w-3 h-3 rounded-full bg-red-500" title="Error loading data" />
-                  ) : (
-                    <div className="w-3 h-3 rounded-full bg-green-500" title="Data loaded successfully" />
-                  )}
-                </div>
-                
-                <CardHeader className="pb-3 pr-8">
-                  <CardTitle className="text-sm font-mono break-all leading-tight">
-                    {address}
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">ETH Balance</span>
-                      <span className="font-semibold text-right">
-                        {isLoading ? (
-                          <LoadingSpinner size="sm" />
-                        ) : (
-                          <span>{eth} ETH</span>
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">USD Value</span>
-                      <span className="font-semibold text-green-600 text-right">
-                        {isLoading ? (
-                          <LoadingSpinner size="sm" />
-                        ) : (
-                          <span>${usd}</span>
-                        )}
-                      </span>
-                    </div>
-                    {error && (
-                      <div className="mt-2">
-                        <Badge variant="destructive" className="text-xs">
-                          Failed to load
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+            {addresses.map((address) => (
+              <AddressCard key={address} address={address} ethPrice={price!} />
             ))}
           </div>
         )}
