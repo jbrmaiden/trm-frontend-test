@@ -23,10 +23,10 @@ Choose **3 features** from the categories below to implement. Focus on **quality
 
 Implement the ability to add and remove addresses dynamically:
 
-- **Add Address Form**: Input field with Ethereum address validation
+- **Add Address Form**: Input field with Ethereum address validation (done)
 - **Remove Address**: Delete button on each address card
 - **Persistence**: Save address list to localStorage
-- **Validation**: Prevent duplicates and invalid addresses
+- **Validation**: Prevent duplicates and invalid addresses (done)
 - **UX Polish**: Success/error notifications for add/remove actions
 
 **Bonus**: Import addresses from CSV or batch add multiple addresses
@@ -97,7 +97,7 @@ Demonstrate testing excellence:
 
 - **Component Tests**: Test ExposurePage with different states (done)
 - **Hook Tests**: Comprehensive tests for useBalance and usePrice with mocks (done)
-- **Integration Tests**: Full user flow testing with MSW
+- **Integration Tests**: Full user flow testing with MSW (done)
 - **Accessibility Tests**: Automated a11y testing with jest-axe
 - **Performance Tests**: Bundle size and rendering performance checks
 
