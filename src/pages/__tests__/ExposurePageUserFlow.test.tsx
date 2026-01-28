@@ -466,4 +466,142 @@ describe('ExposurePage - Full User Flow Tests', () => {
       });
     });
   });
+
+  describe('Remove Address Flow', () => {
+    it('removes address when delete button is clicked', async () => {
+      const user = userEvent.setup();
+      const ADDR1 = '0x1111111111111111111111111111111111111111';
+      const ADDR2 = '0x2222222222222222222222222222222222222222';
+
+      // Start with two addresses
+      setTestAddresses([ADDR1, ADDR2]);
+
+      server.use(
+        mockEtherscanApi({
+          price: '2000.00',
+          balances: {
+            [ADDR1]: '1000000000000000000', // 1 ETH
+            [ADDR2]: '2000000000000000000', // 2 ETH
+          },
+        })
+      );
+
+      render(<ExposurePage />);
+
+      // Wait for both addresses to load
+      await waitFor(
+        () => {
+          expect(screen.getByText(ADDR1)).toBeInTheDocument();
+          expect(screen.getByText(ADDR2)).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      // Verify we have 2 addresses
+      expect(getTestAddresses()).toHaveLength(2);
+
+      // Click delete on first address
+      const deleteButtons = screen.getAllByRole('button', { name: /remove address/i });
+      expect(deleteButtons).toHaveLength(2);
+      await user.click(deleteButtons[0]);
+
+      // Address should be removed from store
+      await waitFor(() => {
+        expect(getTestAddresses()).toHaveLength(1);
+      });
+
+      // First address should no longer be in the document
+      await waitFor(() => {
+        expect(screen.queryByText(ADDR1)).not.toBeInTheDocument();
+      });
+
+      // Second address should still be visible
+      expect(screen.getByText(ADDR2)).toBeInTheDocument();
+    });
+
+    it('shows empty state when last address is removed', async () => {
+      const user = userEvent.setup();
+      const ADDR1 = '0x1111111111111111111111111111111111111111';
+
+      // Start with one address
+      setTestAddresses([ADDR1]);
+
+      server.use(
+        mockEtherscanApi({
+          price: '2000.00',
+          balances: {
+            [ADDR1]: '1000000000000000000', // 1 ETH
+          },
+        })
+      );
+
+      render(<ExposurePage />);
+
+      // Wait for address to load
+      await waitFor(
+        () => {
+          expect(screen.getByText(ADDR1)).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      // Verify we have 1 address
+      expect(getTestAddresses()).toHaveLength(1);
+
+      // Click delete button
+      const deleteButton = screen.getByRole('button', { name: /remove address/i });
+      await user.click(deleteButton);
+
+      // Address should be removed from store
+      await waitFor(() => {
+        expect(getTestAddresses()).toHaveLength(0);
+      });
+
+      // Empty state should appear
+      await waitFor(() => {
+        expect(screen.getByText(/no addresses monitored/i)).toBeInTheDocument();
+      });
+    });
+
+    it('updates address count badge after removing address', async () => {
+      const user = userEvent.setup();
+      const ADDR1 = '0x1111111111111111111111111111111111111111';
+      const ADDR2 = '0x2222222222222222222222222222222222222222';
+
+      // Start with two addresses
+      setTestAddresses([ADDR1, ADDR2]);
+
+      server.use(
+        mockEtherscanApi({
+          price: '2000.00',
+          balances: {
+            [ADDR1]: '1000000000000000000', // 1 ETH
+            [ADDR2]: '2000000000000000000', // 2 ETH
+          },
+        })
+      );
+
+      render(<ExposurePage />);
+
+      // Wait for both addresses to load and verify badge shows 2
+      await waitFor(
+        () => {
+          expect(screen.getByText(/2 Addresses/i)).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      // Remove first address
+      const deleteButtons = screen.getAllByRole('button', { name: /remove address/i });
+      await user.click(deleteButtons[0]);
+
+      // Badge should update to show 1 Address
+      await waitFor(() => {
+        expect(screen.getByText(/1 Addresses/i)).toBeInTheDocument();
+      });
+
+      // Verify store was updated
+      expect(getTestAddresses()).toHaveLength(1);
+    });
+  });
 });
