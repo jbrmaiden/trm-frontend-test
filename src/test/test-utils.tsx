@@ -57,7 +57,7 @@ const customRender = (ui: ReactElement, options?: CustomRenderOptions) => {
 
   // Set initial Zustand state if provided
   if (initialAddresses !== undefined) {
-    useSanctionedStore.setState({ addresses: initialAddresses });
+    useSanctionedStore.setState({ addresses: initialAddresses, lastSaved: null });
   }
 
   return render(ui, { wrapper: AllTheProviders, ...renderOptions });
@@ -79,14 +79,14 @@ const customRender = (ui: ReactElement, options?: CustomRenderOptions) => {
  * @param addresses - Array of Ethereum addresses
  */
 export function setTestAddresses(addresses: string[]) {
-  useSanctionedStore.setState({ addresses });
+  useSanctionedStore.setState({ addresses, lastSaved: null });
 }
 
 /**
  * Helper to clear all addresses in the sanctioned store
  */
 export function clearTestAddresses() {
-  useSanctionedStore.setState({ addresses: [] });
+  useSanctionedStore.setState({ addresses: [], lastSaved: null });
 }
 
 /**
