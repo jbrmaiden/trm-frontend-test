@@ -251,7 +251,7 @@
     - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 45 minutes
     - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 45 minutes
     - [feat/remove-address]: 15 minutes
-    [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
+    - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
 - **Testing**: 
     - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
     - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 20 minutes
@@ -263,7 +263,7 @@
     - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 15 minutes
     - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 30 minutes
     - [feat/remove-address]: 5 minutes
-    [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
+    - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
 - **Total**: X minutes
 
 ## Reflection
