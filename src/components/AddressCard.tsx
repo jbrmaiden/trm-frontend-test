@@ -1,6 +1,8 @@
-import React from 'react';
+import { Trash2 } from 'lucide-react';
 import { useBalance } from '../hooks/useBalance';
+import { useSanctionedStore } from '@/stores/sanctionedStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import BigNumber from 'bignumber.js';
@@ -13,21 +15,35 @@ interface AddressCardProps {
 /**
  * AddressCard component that displays balance information for a single Ethereum address.
  * Each card manages its own data fetching via useBalance hook.
- *
- * This pattern ensures hooks are called consistently (no dynamic hook calls in loops),
- * and makes it easy to refactor into table rows later.
  */
 function AddressCard({ address, ethPrice }: AddressCardProps) {
   const { data, isLoading, error } = useBalance(address);
+  const removeAddress = useSanctionedStore((s) => s.removeAddress);
 
   // Calculate formatted values
   const eth = data ? new BigNumber(data).toFormat(6) : '—';
   const usd = data ? new BigNumber(data).multipliedBy(ethPrice).toFormat(2) : '—';
 
+  function handleRemove() {
+    removeAddress(address);
+  }
+
   return (
     <Card className="hover:shadow-lg transition-shadow relative">
-      {/* Status indicator as a small dot in top-right corner */}
-      <div className="absolute top-3 right-3">
+      {/* Delete button and status indicator in top-right corner */}
+      <div className="absolute top-3 right-3 flex items-center gap-2">
+        {/* Delete button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+          onClick={handleRemove}
+          aria-label={`Remove address ${address}`}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+
+        {/* Status indicator */}
         {isLoading ? (
           <div
             className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"
@@ -43,7 +59,7 @@ function AddressCard({ address, ethPrice }: AddressCardProps) {
         )}
       </div>
 
-      <CardHeader className="pb-3 pr-8">
+      <CardHeader className="pb-3 pr-12 mt-4">
         <CardTitle className="text-sm font-mono break-all leading-tight">
           {address}
         </CardTitle>

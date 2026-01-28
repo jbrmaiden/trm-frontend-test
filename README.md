@@ -154,3 +154,24 @@ Strict configuration with path mapping (`@/*` imports) and comprehensive type ch
 ---
 
 Ready to get started? Check `TAKE_HOME.md` for your assignment details.
+
+---
+
+### New Features Added
+
+#### 1. Dynamic Address Management
+- **Add Address Form**: Interactive dialog with Ethereum address validation using Zod.
+- **Remove Address**: Delete functionality for existing addresses
+- **Robust Validation**: Enforces valid Ethereum address formats (regex and length) and prevents duplicate entries (case-insensitive).
+- **UX Polish**: Responsive design (mobile-first), accessible focus management, and keyboard navigation support.
+
+#### 2. Testing & Quality Excellence
+- **Comprehensive Hook Testing**: Robust test coverage for `useBalance`, `usePrice`, and `useAddAddressForm` handling success, loading, retry logic, and error states.
+- **Component Unit Tests**: Isolated testing of UI components including `ExposurePage`, `AddressCard`, and `AddAddressDialog`.
+- **Integration User Flows**: End-to-end integration tests using MSW (Mock Service Worker) to verify complex interactions like adding an address and seeing it reflected in the dashboard.
+- **Error Handling**: Thorough testing suite with verification of API failure modes, custom retry logic (up to 3 times), and UI recovery states.
+
+#### 3. Architecture & Refactoring
+- **State Decoupling**: Extracted global state into dedicated stores (`src/stores`) for better testability and separation of concerns.
+- **Performance Optimized**: Refactored address monitoring to use `useQueries` for efficient batch fetching and isolated `AddressCard` components to prevent unnecessary re-renders.
+- **Type-Safe Validation**: Integrated Zod for schema-based validation across forms and API responses.

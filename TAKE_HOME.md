@@ -24,7 +24,7 @@ Choose **3 features** from the categories below to implement. Focus on **quality
 Implement the ability to add and remove addresses dynamically:
 
 - **Add Address Form**: Input field with Ethereum address validation (done)
-- **Remove Address**: Delete button on each address card
+- **Remove Address**: Delete button on each address card (done)
 - **Persistence**: Save address list to localStorage
 - **Validation**: Prevent duplicates and invalid addresses (done)
 - **UX Polish**: Success/error notifications for add/remove actions

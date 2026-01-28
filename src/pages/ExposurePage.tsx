@@ -15,7 +15,6 @@ const ExposurePage: React.FC = () => {
   const { data: price, isLoading: priceLoading, error: priceError } = usePrice();
 
   // Fetch all balances for total calculation
-  // This uses the same query keys as AddressCard components, so data is shared via cache
   const balanceQueries = useAddressesBalances(addresses);
 
   if (priceLoading) {
