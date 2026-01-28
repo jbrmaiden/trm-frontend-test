@@ -161,7 +161,7 @@ Ready to get started? Check `TAKE_HOME.md` for your assignment details.
 
 #### 1. Dynamic Address Management
 - **Add Address Form**: Interactive dialog with Ethereum address validation using Zod.
-- **Remove Address**: Delete functionality for existing addresses
+- **Remove Address**: Delete functionality for existing addresses with a secure confirmation step using `AlertDialog`. 
 - **Robust Validation**: Enforces valid Ethereum address formats (regex and length) and prevents duplicate entries (case-insensitive).
 - **UX Polish**: Responsive design (mobile-first), accessible focus management, and keyboard navigation support.
 
