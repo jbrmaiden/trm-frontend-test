@@ -146,12 +146,46 @@
 
  
 
-### Feature 3: [Name]
+### Feature 3: One piece of [Dynamic Address Management] --> Remove Address (with Confirmation Dialog)
+- **Why I chose this**:
+    After implementing address addition with validation, breaking down subsequent features into smaller, focused PRs became a priority. The remove address feature was the logical next step to complete the core dynamic address management functionality. Smaller PRs improve code review efficiency, reduce cognitive load for reviewers, and create a clearer git history that documents the evolution of the feature set.
+
+- **Time spent**:
+    - ~45 minutes (feat/remove-address)
+
+- **Challenges faced**:
+    1. **UX consideration for destructive actions**: The initial implementation with direct deletion felt incomplete from a user experience perspective. Accidental clicks could lead to unintended data loss, prompting the decision to add a confirmation step.
+
+    2. **Component library consistency**: Needed to create a new AlertDialog component following the same pattern as the existing Dialog component, ensuring consistency across the codebase while leveraging `@base-ui/react/alert-dialog` primitives.
+
+
+- **Key decisions**:
+    #### Basic Remove Functionality (feat/remove-address)
+    1. **Minimal component modification**: Leveraged the existing `removeAddress` function from `sanctionedStore`, requiring only UI additions to `AddressCard.tsx`.
+
+    2. **Delete button placement and styling**:
+        - Positioned in top-right corner, left of the status indicator dot
+        - Used `ghost` variant with custom size override (`h-6 w-6`) for a subtle, non-intrusive appearance
+        - Hover state transitions to destructive color (`hover:text-destructive hover:bg-destructive/10`) to indicate the action
+        - Icon: `Trash2` from `lucide-react` at 16x16px, leveraging existing package.
+
+    3. **Layout adjustment**: Updated the absolute-positioned container to flexbox (`flex items-center gap-2`) to accommodate both the delete button and status indicator. Increased `CardHeader` padding from `pr-8` to `pr-12` to prevent content overlap.
+
+    4. **Accessibility**: Added descriptive `aria-label` including the full address (e.g., `Remove address 0x1234...`) for screen reader users.
+
+
+
+### Feature 4: [Name]
 - **Why I chose this**: 
 - **Time spent**: 
 - **Challenges faced**: 
 - **Key decisions**: 
 
+### Feature 5: [Name]
+- **Why I chose this**: 
+- **Time spent**: 
+- **Challenges faced**: 
+- **Key decisions**: 
 ## Technical Approach
 
 ### Architecture Decisions
@@ -184,18 +218,22 @@
     - testing-setup: 45 minutes
     - hook-tests: 25 minutes
     - add-address-form: 65 minutes
+    - feat/remove-address: 20 minutes
 - **Implementation**: 
     - testing-setup: 57 minutes
     - hook-tests: 45 minutes
     - add-address-form: 45 minutes
+    - feat/remove-address: 15 minutes
 - **Testing**: 
     - testing-setup: 20 minutes
     - hook tests: 20 minutes
     - add-address-form: 40 minutes
+    - feat/remove-address: 5 minutes
 - **Polish/Documentation**: 
     - testing-setup: 20 minutes
     - hook-tests: 15 minutes
     - add-address-form: 30 minutes
+    - feat/remove-address: 5 minutes
 - **Total**: X minutes
 
 ## Reflection
