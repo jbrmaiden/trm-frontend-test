@@ -164,6 +164,7 @@ Ready to get started? Check `TAKE_HOME.md` for your assignment details.
 - **Remove Address**: Delete functionality for existing addresses with a secure confirmation step using `AlertDialog`. 
 - **Robust Validation**: Enforces valid Ethereum address formats (regex and length) and prevents duplicate entries (case-insensitive).
 - **UX Polish**: Responsive design (mobile-first), accessible focus management, and keyboard navigation support.
+- **Persistence** Persisting the changes on addresses on the localStorage and added a helper indicator to show when it was last modified.
 
 #### 2. Testing & Quality Excellence
 - **Comprehensive Hook Testing**: Robust test coverage for `useBalance`, `usePrice`, and `useAddAddressForm` handling success, loading, retry logic, and error states.

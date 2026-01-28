@@ -7,14 +7,14 @@
 - **Why I chose this**: 
     I decided to start with the testing capability as a way to explore and to know better about the current application. By starting with the testing, I can capture regressions on the state of the application. It will also allow me to as I go to implement the rest of the features outlined, I can have more time to focus on the specific tests for the feature, since all the rest should be already covered. 
 - **Time spent**: 
-    - ~140 minutes [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
-    - ~105 minutes [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4)
+    - ~140 minutes [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
+    - ~105 minutes [feat/hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4)
 - **Challenges faced**: 
-    #### [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
+    #### [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
     1. Application startup failed due to Etherscan API version mismatch (app configured for v1 while Etherscan now requires v2). Resolved by consulting Etherscan docs and adding required parameters for v2.
     2. Initial tight coupling of global state in main.tsx made unit and integration testing difficult until refactoring was completed.
     
-    #### [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4)
+    #### [feat/hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4)
     1. The hooks have custom retry logic that retries failed requests up to 3 times with exponential backoff (1s, 2s, 4s = ~7 seconds total). This forces us to adjust the testing to actually wait for a longer time to make sure the actual behavior is happening. Given the amount of cases we added, it is taking around 70 seconds for these tests to pass. We could have a override configuration which disables the retries, and the testing case would take only around 2 seconds to complete, but this would not test the actual behavior. This have implications on the CI/CD bulding time. Since we are not worried about it and I want the tests to be as confidente as possible I have decided to keep what we currently inherited from the actual code base for now. 
         *Trade-offs*
             - Pros of real testing:
@@ -29,7 +29,7 @@
 
 
 - **Key decisions**: 
-    #### [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
+    #### [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
 
    1. **Decoupled application state**
 
@@ -60,7 +60,7 @@
             - Calculation validation (2 tests)
             - Mixed/intermittent states (2 tests)
 
-    #### [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4)
+    #### [feat/hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4)
     
     1. (usePrice) Added basic tests for the happy path, handleding numeric prices, decimal handling and query keys.
     2. (usePrice) Tested the custom/default messages for when the response returns with `status: 0` to make sure condition is caught on the implementation
@@ -77,15 +77,15 @@
 
 ### Feature 2: 2 pieces of [Dynamic Address Management] (Add Address Form and Validation) and one piece of [Testing & Quality] (Integration Tests) -- also testing for the new components
 - **Why I chose this**:
-    #### [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
+    #### [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
     Since I had already added the foundation tests to the application, the next step would be to start implementing it. I decided to pick Adding Addresses because it is the basic to make sure we can have a more dynamic application, it also unblocks the other features to be more complete and suits well as a first feature to be implemented. The other features would look lacking if we did not pick this one first.
     Initially, adding and validation seemed to be the right approach to break into smaller pieces of work. Since the application is starting to become more dynamic now, I also decided to write integration tests for checking the user flow interactively.
 
 - **Time spent**:
-    - ~180 minutes [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
+    - ~180 minutes [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
 
 - **Challenges faced**:
-    #### [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
+    #### [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
     1. **Component library selection**: I decided to go for Base UI (from MUI) (instead of Radix UI, since I see it's less being used currently) was selected because it provides headless accessibility primitives without imposing styling, allowing better integration with the existing Tailwind setup.
     2. **Address normalization strategy**: Needed to decide whether to normalize addresses on input, on validation, or on storage. Chose to normalize to lowercase before both duplicate checking and storage to ensure consistent case-insensitive behavior throughout the application.
     3. **Form state management**: Considered using a form library (react-hook-form) but decided a custom hook (`useAddAddressForm`) was sufficient for this single-field form while maintaining clear separation of concerns between UI and business logic.
@@ -102,7 +102,7 @@
   ```
 
 - **Key decisions**:
-    #### [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
+    #### [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
     1. **Zod for validation**: Added `zod` library for Ethereum address validation. It provides a clean, declarative schema that separates validation concerns from the hook logic. The schema enforces max 42 characters and the regex pattern `/^0x[a-fA-F0-9]{40}$/`.
 
     2. **Base UI + shadcn/ui + Tailwind architecture**:
@@ -200,11 +200,19 @@
         - Remove button confirms deletion
 
 
-### Feature 4: [Name]
+### Feature 4: 1 piece of [Dynamic Address Management], **Persistence**
 - **Why I chose this**: 
+    Since the address addition and deletion was already added, but we were always using the same set coming from the DEFAULT_ADDRESS on loading up, adding the persistance layer seemed to fit as the best logical step to implement. It also wouldn't demand a lot of time since it's very simple leveraging the `persist` method from Zustand.
 - **Time spent**: 
+    -  ~ 30 minutes [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8)
 - **Challenges faced**: 
+    - Implementation very straighforward, no challenges to get it up working.
 - **Key decisions**: 
+    [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8)
+    
+    - Added `zustand`'s `persist` middleware to `src/stores/sanctionedStore.ts`, tracking a `lastSaved` timestamp alongside the address list so the state automatically hydrates from `localStorage`.
+    - Created `SaveStatusIndicator` to show “Saved just now / X minutes ago” next to the “Add Address” action; also wrote interface testing to know it correctly displays the right message.
+    - Cleared the persisted store key between tests and extended the shared test utilities so the new state shape (`addresses` + `lastSaved`) remains isolated per suite.
 
 ### Feature 5: [Name]
 - **Why I chose this**: 
@@ -239,31 +247,39 @@
 
 
 ## Time Breakdown
+
 - **Planning**: 
-    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 45 minutes
-    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 25 minutes
-    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 65 minutes
+    - [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 45 minutes
+    - [feat/hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 25 minutes
+    - [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 65 minutes
     - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 20 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
+    - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 10 minutes
 
 - **Implementation**: 
-    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 57 minutes
-    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 45 minutes
-    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 45 minutes
-    - [feat/remove-address]: 15 minutes
+    - [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 57 minutes
+    - [feat/hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 45 minutes
+    - [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 45 minutes
+    - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 15 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
+    - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 10 minutes
+
 - **Testing**: 
-    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
-    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 20 minutes
-    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 40 minutes
-    - [feat/remove-address]: 5 minutes
+    - [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
+    - [feat/hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 20 minutes
+    - [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 40 minutes
+    - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 5 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
+    - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 5 minutes
+
 - **Polish/Documentation**: 
-    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
-    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 15 minutes
-    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 30 minutes
-    - [feat/remove-address]: 5 minutes
+    - [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
+    - [feat/hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 15 minutes
+    - [feat/add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 30 minutes
+    - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 5 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
+    - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 5 minutes
+
 - **Total**: X minutes
 
 ## Reflection

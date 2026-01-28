@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AddAddressDialog } from '@/components/AddAddressDialog';
 import AddressCard from '@/components/AddressCard';
+import SaveStatusIndicator from '@/components/SaveStatusIndicator';
 import BigNumber from 'bignumber.js';
 
 const ExposurePage: React.FC = () => {
@@ -89,6 +90,9 @@ const ExposurePage: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+        <div className="flex items-center justify-end pb-4">
+        <SaveStatusIndicator />
+        </div>
 
         {/* Addresses Grid or Empty State */}
         {addresses.length === 0 ? (
