@@ -7,10 +7,10 @@
 - **Why I chose this**: 
     I decided to start with the testing capability as a way to explore and to know better about the current application. By starting with the testing, I can capture regressions on the state of the application. It will also allow me to as I go to implement the rest of the features outlined, I can have more time to focus on the specific tests for the feature, since all the rest should be already covered. 
 - **Time spent**: 
-    - ~140 minutes (testing-setup)[https://github.com/jbrmaiden/trm-frontend-test/pull/3]
+    - ~140 minutes [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
     - ~105 minutes [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4)
 - **Challenges faced**: 
-    #### (testing-setup)[https://github.com/jbrmaiden/trm-frontend-test/pull/3]
+    #### [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
     1. Application startup failed due to Etherscan API version mismatch (app configured for v1 while Etherscan now requires v2). Resolved by consulting Etherscan docs and adding required parameters for v2.
     2. Initial tight coupling of global state in main.tsx made unit and integration testing difficult until refactoring was completed.
     
@@ -29,7 +29,7 @@
 
 
 - **Key decisions**: 
-    #### (testing-setup)[https://github.com/jbrmaiden/trm-frontend-test/pull/3]
+    #### [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3)
 
    1. **Decoupled application state**
 
@@ -77,15 +77,15 @@
 
 ### Feature 2: 2 pieces of [Dynamic Address Management] (Add Address Form and Validation) and one piece of [Testing & Quality] (Integration Tests) -- also testing for the new components
 - **Why I chose this**:
-    #### (add-address-form)
+    #### [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
     Since I had already added the foundation tests to the application, the next step would be to start implementing it. I decided to pick Adding Addresses because it is the basic to make sure we can have a more dynamic application, it also unblocks the other features to be more complete and suits well as a first feature to be implemented. The other features would look lacking if we did not pick this one first.
     Initially, adding and validation seemed to be the right approach to break into smaller pieces of work. Since the application is starting to become more dynamic now, I also decided to write integration tests for checking the user flow interactively.
 
 - **Time spent**:
-    - ~180 minutes (add-address-form)
+    - ~180 minutes [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
 
 - **Challenges faced**:
-    #### (add-address-form)
+    #### [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
     1. **Component library selection**: I decided to go for Base UI (from MUI) (instead of Radix UI, since I see it's less being used currently) was selected because it provides headless accessibility primitives without imposing styling, allowing better integration with the existing Tailwind setup.
     2. **Address normalization strategy**: Needed to decide whether to normalize addresses on input, on validation, or on storage. Chose to normalize to lowercase before both duplicate checking and storage to ensure consistent case-insensitive behavior throughout the application.
     3. **Form state management**: Considered using a form library (react-hook-form) but decided a custom hook (`useAddAddressForm`) was sufficient for this single-field form while maintaining clear separation of concerns between UI and business logic.
@@ -102,7 +102,7 @@
   ```
 
 - **Key decisions**:
-    #### (add-address-form)
+    #### [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5)
     1. **Zod for validation**: Added `zod` library for Ethereum address validation. It provides a clean, declarative schema that separates validation concerns from the hook logic. The schema enforces max 42 characters and the regex pattern `/^0x[a-fA-F0-9]{40}$/`.
 
     2. **Base UI + shadcn/ui + Tailwind architecture**:
@@ -151,16 +151,23 @@
     After implementing address addition with validation, breaking down subsequent features into smaller, focused PRs became a priority. The remove address feature was the logical next step to complete the core dynamic address management functionality. Smaller PRs improve code review efficiency, reduce cognitive load for reviewers, and create a clearer git history that documents the evolution of the feature set.
 
 - **Time spent**:
-    - ~45 minutes (feat/remove-address)
+    - ~45 minutes [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6)
+    - ~60 minutes [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7)
+
 
 - **Challenges faced**:
+    #### [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6)
     1. **UX consideration for destructive actions**: The initial implementation with direct deletion felt incomplete from a user experience perspective. Accidental clicks could lead to unintended data loss, prompting the decision to add a confirmation step.
 
     2. **Component library consistency**: Needed to create a new AlertDialog component following the same pattern as the existing Dialog component, ensuring consistency across the codebase while leveraging `@base-ui/react/alert-dialog` primitives.
 
+    #### [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7)
+    1. **AlertDialog vs Dialog behavior**: Understanding the semantic difference—AlertDialog cannot be dismissed by clicking outside the backdrop, requiring explicit user action (Cancel or Remove). This is intentional for destructive operations.
+
 
 - **Key decisions**:
-    #### Basic Remove Functionality (feat/remove-address)
+    #### Basic Remove Functionality [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6)
+
     1. **Minimal component modification**: Leveraged the existing `removeAddress` function from `sanctionedStore`, requiring only UI additions to `AddressCard.tsx`.
 
     2. **Delete button placement and styling**:
@@ -173,6 +180,24 @@
 
     4. **Accessibility**: Added descriptive `aria-label` including the full address (e.g., `Remove address 0x1234...`) for screen reader users.
 
+    #### Remove Address Confirmation Dialog [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7)
+
+    1. **Created AlertDialog component** (`src/components/ui/alert-dialog.tsx`):
+        - Built on `@base-ui/react/alert-dialog` primitives
+        - Followed existing Dialog component patterns for consistency
+
+    2. **Focus and keyboard management** (provided by Base UI):
+        - Focus trapped within dialog when open
+        - Escape key closes dialog without removing
+        - Focus returns to trigger button after close
+
+    3. **Test coverage**:
+        - Basic removal flow (click delete --> address removed)
+        - Empty state transition (remove last address --> "No addresses monitored")
+        - Confirmation dialog appears on delete click
+        - Cancel button closes dialog, address remains
+        - Escape key closes dialog, address remains
+        - Remove button confirms deletion
 
 
 ### Feature 4: [Name]
@@ -215,25 +240,30 @@
 
 ## Time Breakdown
 - **Planning**: 
-    - testing-setup: 45 minutes
-    - hook-tests: 25 minutes
-    - add-address-form: 65 minutes
-    - feat/remove-address: 20 minutes
+    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 45 minutes
+    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 25 minutes
+    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 65 minutes
+    - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 20 minutes
+    - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
+
 - **Implementation**: 
-    - testing-setup: 57 minutes
-    - hook-tests: 45 minutes
-    - add-address-form: 45 minutes
-    - feat/remove-address: 15 minutes
+    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 57 minutes
+    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 45 minutes
+    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 45 minutes
+    - [feat/remove-address]: 15 minutes
+    - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
 - **Testing**: 
-    - testing-setup: 20 minutes
-    - hook tests: 20 minutes
-    - add-address-form: 40 minutes
-    - feat/remove-address: 5 minutes
+    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
+    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 20 minutes
+    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 40 minutes
+    - [feat/remove-address]: 5 minutes
+    - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
 - **Polish/Documentation**: 
-    - testing-setup: 20 minutes
-    - hook-tests: 15 minutes
-    - add-address-form: 30 minutes
-    - feat/remove-address: 5 minutes
+    - [testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
+    - [hook-tests](https://github.com/jbrmaiden/trm-frontend-test/pull/4): 15 minutes
+    - [add-address-form](https://github.com/jbrmaiden/trm-frontend-test/pull/5): 30 minutes
+    - [feat/remove-address]: 5 minutes
+    - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
 - **Total**: X minutes
 
 ## Reflection

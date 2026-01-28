@@ -468,27 +468,62 @@ describe('ExposurePage - Full User Flow Tests', () => {
   });
 
   describe('Remove Address Flow', () => {
-    it('removes address when delete button is clicked', async () => {
+    it('shows confirmation dialog when delete button is clicked', async () => {
       const user = userEvent.setup();
       const ADDR1 = '0x1111111111111111111111111111111111111111';
-      const ADDR2 = '0x2222222222222222222222222222222222222222';
 
-      // Start with two addresses
-      setTestAddresses([ADDR1, ADDR2]);
+      setTestAddresses([ADDR1]);
 
       server.use(
         mockEtherscanApi({
           price: '2000.00',
           balances: {
-            [ADDR1]: '1000000000000000000', // 1 ETH
-            [ADDR2]: '2000000000000000000', // 2 ETH
+            [ADDR1]: '1000000000000000000',
           },
         })
       );
 
       render(<ExposurePage />);
 
-      // Wait for both addresses to load
+      await waitFor(
+        () => {
+          expect(screen.getByText(ADDR1)).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      // Click delete button
+      await user.click(screen.getByRole('button', { name: /remove address/i }));
+
+      // Confirmation dialog should appear
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+        expect(screen.getByText(/are you sure/i)).toBeInTheDocument();
+      });
+
+      // Address should still be in store (not yet removed)
+      expect(getTestAddresses()).toHaveLength(1);
+    });
+
+    it('removes address when Remove button is confirmed', async () => {
+      const user = userEvent.setup();
+      const ADDR1 = '0x1111111111111111111111111111111111111111';
+      const ADDR2 = '0x2222222222222222222222222222222222222222';
+
+      setTestAddresses([ADDR1, ADDR2]);
+
+      server.use(
+        mockEtherscanApi({
+          price: '2000.00',
+          balances: {
+            [ADDR1]: '1000000000000000000',
+            [ADDR2]: '2000000000000000000',
+          },
+        })
+      );
+
+      render(<ExposurePage />);
+
       await waitFor(
         () => {
           expect(screen.getByText(ADDR1)).toBeInTheDocument();
@@ -497,47 +532,47 @@ describe('ExposurePage - Full User Flow Tests', () => {
         { timeout: 3000 }
       );
 
-      // Verify we have 2 addresses
       expect(getTestAddresses()).toHaveLength(2);
 
       // Click delete on first address
       const deleteButtons = screen.getAllByRole('button', { name: /remove address/i });
-      expect(deleteButtons).toHaveLength(2);
       await user.click(deleteButtons[0]);
 
-      // Address should be removed from store
+      // Wait for dialog and click Remove
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('button', { name: /^remove$/i }));
+
+      // Address should be removed
       await waitFor(() => {
         expect(getTestAddresses()).toHaveLength(1);
       });
 
-      // First address should no longer be in the document
       await waitFor(() => {
         expect(screen.queryByText(ADDR1)).not.toBeInTheDocument();
       });
 
-      // Second address should still be visible
       expect(screen.getByText(ADDR2)).toBeInTheDocument();
     });
 
-    it('shows empty state when last address is removed', async () => {
+    it('cancels removal when Cancel button is clicked', async () => {
       const user = userEvent.setup();
       const ADDR1 = '0x1111111111111111111111111111111111111111';
 
-      // Start with one address
       setTestAddresses([ADDR1]);
 
       server.use(
         mockEtherscanApi({
           price: '2000.00',
           balances: {
-            [ADDR1]: '1000000000000000000', // 1 ETH
+            [ADDR1]: '1000000000000000000',
           },
         })
       );
 
       render(<ExposurePage />);
 
-      // Wait for address to load
       await waitFor(
         () => {
           expect(screen.getByText(ADDR1)).toBeInTheDocument();
@@ -545,19 +580,65 @@ describe('ExposurePage - Full User Flow Tests', () => {
         { timeout: 3000 }
       );
 
-      // Verify we have 1 address
+      // Click delete button
+      await user.click(screen.getByRole('button', { name: /remove address/i }));
+
+      // Wait for dialog
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+      });
+
+      // Click Cancel
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
+
+      // Dialog should close
+      await waitFor(() => {
+        expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+      });
+
+      // Address should still be present
+      expect(getTestAddresses()).toHaveLength(1);
+      expect(screen.getByText(ADDR1)).toBeInTheDocument();
+    });
+
+    it('shows empty state when last address is removed', async () => {
+      const user = userEvent.setup();
+      const ADDR1 = '0x1111111111111111111111111111111111111111';
+
+      setTestAddresses([ADDR1]);
+
+      server.use(
+        mockEtherscanApi({
+          price: '2000.00',
+          balances: {
+            [ADDR1]: '1000000000000000000',
+          },
+        })
+      );
+
+      render(<ExposurePage />);
+
+      await waitFor(
+        () => {
+          expect(screen.getByText(ADDR1)).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
       expect(getTestAddresses()).toHaveLength(1);
 
-      // Click delete button
-      const deleteButton = screen.getByRole('button', { name: /remove address/i });
-      await user.click(deleteButton);
+      // Click delete and confirm
+      await user.click(screen.getByRole('button', { name: /remove address/i }));
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('button', { name: /^remove$/i }));
 
-      // Address should be removed from store
+      // Empty state should appear
       await waitFor(() => {
         expect(getTestAddresses()).toHaveLength(0);
       });
 
-      // Empty state should appear
       await waitFor(() => {
         expect(screen.getByText(/no addresses monitored/i)).toBeInTheDocument();
       });
@@ -568,22 +649,20 @@ describe('ExposurePage - Full User Flow Tests', () => {
       const ADDR1 = '0x1111111111111111111111111111111111111111';
       const ADDR2 = '0x2222222222222222222222222222222222222222';
 
-      // Start with two addresses
       setTestAddresses([ADDR1, ADDR2]);
 
       server.use(
         mockEtherscanApi({
           price: '2000.00',
           balances: {
-            [ADDR1]: '1000000000000000000', // 1 ETH
-            [ADDR2]: '2000000000000000000', // 2 ETH
+            [ADDR1]: '1000000000000000000',
+            [ADDR2]: '2000000000000000000',
           },
         })
       );
 
       render(<ExposurePage />);
 
-      // Wait for both addresses to load and verify badge shows 2
       await waitFor(
         () => {
           expect(screen.getByText(/2 Addresses/i)).toBeInTheDocument();
@@ -591,16 +670,19 @@ describe('ExposurePage - Full User Flow Tests', () => {
         { timeout: 3000 }
       );
 
-      // Remove first address
+      // Click delete and confirm
       const deleteButtons = screen.getAllByRole('button', { name: /remove address/i });
       await user.click(deleteButtons[0]);
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('button', { name: /^remove$/i }));
 
-      // Badge should update to show 1 Address
+      // Badge should update
       await waitFor(() => {
         expect(screen.getByText(/1 Addresses/i)).toBeInTheDocument();
       });
 
-      // Verify store was updated
       expect(getTestAddresses()).toHaveLength(1);
     });
   });
