@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useBalance } from '../../hooks/useBalance';
@@ -33,6 +33,16 @@ function AddressCard({ address, ethPrice }: AddressCardProps) {
   const { data, isLoading, error } = useBalance(address);
   const removeAddress = useSanctionedStore((s) => s.removeAddress);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Show toast when balance error occurs
+  useEffect(() => {
+    if (error) {
+      toast.error('Failed to fetch balance', {
+        id: `balance-error-${address}`,
+        description: `Could not load balance for ${address.slice(0, 10)}...`,
+      });
+    }
+  }, [error, address]);
 
   // Calculate formatted values
   const eth = data ? new BigNumber(data).toFormat(6) : '—';

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { toast } from 'sonner';
 import { usePrice } from '../hooks/usePrice';
 import { useAddressesBalances } from '../hooks/useAddressesBalances';
 import { useSanctionedStore } from '@/stores/sanctionedStore';
@@ -17,6 +18,16 @@ const ExposurePage: React.FC = () => {
 
   // Fetch all balances for total calculation
   const balanceQueries = useAddressesBalances(addresses);
+
+  // Show toast when price error occurs
+  useEffect(() => {
+    if (priceError) {
+      toast.error('Failed to fetch ETH price', {
+        id: 'price-error',
+        description: 'Could not load current ETH price',
+      });
+    }
+  }, [priceError]);
 
   if (priceLoading) {
     return (

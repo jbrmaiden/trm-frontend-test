@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { toast } from 'sonner';
 import {
   render,
   screen,
@@ -10,6 +11,16 @@ import {
 } from '@/test/test-utils';
 import ExposurePage from '../ExposurePage';
 
+// Mock sonner
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+  },
+  Toaster: () => null,
+}));
+
 // Test addresses (valid Ethereum address format)
 const TEST_ADDRESSES = [
   '0x1234567890123456789012345678901234567890',
@@ -19,6 +30,10 @@ const TEST_ADDRESSES = [
 const SINGLE_ADDRESS = ['0x1234567890123456789012345678901234567890'];
 
 describe('ExposurePage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe('Loading States', () => {
     it('shows loading spinner when price is loading', async () => {
       // Add delay to price request so we can see loading state
@@ -70,6 +85,41 @@ describe('ExposurePage', () => {
       expect(
         screen.getByText('Unable to fetch ETH price. Please try again later.')
       ).toBeInTheDocument();
+    });
+
+    it('shows error toast when price fetch fails', async () => {
+      server.use(mockPriceError('API rate limit exceeded'));
+
+      render(<ExposurePage />, { initialAddresses: SINGLE_ADDRESS });
+
+      // Wait for error state
+      await waitFor(() => {
+        expect(screen.getByText('Error Loading Price')).toBeInTheDocument();
+      });
+
+      // Verify error toast was called
+      expect(toast.error).toHaveBeenCalledWith('Failed to fetch ETH price', {
+        id: 'price-error',
+        description: 'Could not load current ETH price',
+      });
+    });
+
+    it('does not show error toast when price fetch succeeds', async () => {
+      server.use(
+        mockEtherscanApi({
+          price: '2500.00',
+        })
+      );
+
+      render(<ExposurePage />, { initialAddresses: SINGLE_ADDRESS });
+
+      // Wait for successful load
+      await waitFor(() => {
+        expect(screen.getByText(/ETH Price:/)).toBeInTheDocument();
+      });
+
+      // Verify no error toast was called
+      expect(toast.error).not.toHaveBeenCalled();
     });
 
     it('shows error badge when individual balance fetch fails', async () => {

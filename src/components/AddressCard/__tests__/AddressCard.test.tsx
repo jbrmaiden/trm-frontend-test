@@ -446,5 +446,34 @@ describe('AddressCard', () => {
       expect(toast.success).not.toHaveBeenCalled();
       expect(toast.error).not.toHaveBeenCalled();
     });
+
+    it('shows error toast when balance fetch fails (after all retries)', async () => {
+      server.use(mockBalanceError([TEST_ADDRESS]));
+      render(<AddressCard address={TEST_ADDRESS} ethPrice={TEST_ETH_PRICE} />);
+
+      // Wait for the error state to be reached (after all retries)
+      await waitFor(() => {
+        expect(screen.getByTitle('Error loading data')).toBeInTheDocument();
+      });
+
+      // Verify error toast was called
+      expect(toast.error).toHaveBeenCalledWith('Failed to fetch balance', {
+        id: `balance-error-${TEST_ADDRESS}`,
+        description: expect.stringContaining('Could not load balance'),
+      });
+    });
+
+    it('does not show error toast on successful balance fetch', async () => {
+      server.use(mockBalanceSuccess({ [TEST_ADDRESS]: '1000000000000000000' }));
+      render(<AddressCard address={TEST_ADDRESS} ethPrice={TEST_ETH_PRICE} />);
+
+      // Wait for success state
+      await waitFor(() => {
+        expect(screen.getByTitle('Data loaded successfully')).toBeInTheDocument();
+      });
+
+      // Verify no error toast was called
+      expect(toast.error).not.toHaveBeenCalled();
+    });
   });
 });
