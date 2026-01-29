@@ -163,7 +163,7 @@ Ready to get started? Check `TAKE_HOME.md` for your assignment details.
 - **Add Address Form**: Interactive dialog with Ethereum address validation using Zod.
 - **Remove Address**: Delete functionality for existing addresses with a secure confirmation step using `AlertDialog`. 
 - **Robust Validation**: Enforces valid Ethereum address formats (regex and length) and prevents duplicate entries (case-insensitive).
-- **UX Polish**: Responsive design (mobile-first), accessible focus management, and keyboard navigation support.
+- **UX Polish**: Responsive design (mobile-first), accessible focus management, and keyboard navigation support. The application also uses `Sonner` as toast to display success/error messages for the whole application iteractions. 
 - **Persistence** Persisting the changes on addresses on the localStorage and added a helper indicator to show when it was last modified.
 
 #### 2. Testing & Quality Excellence

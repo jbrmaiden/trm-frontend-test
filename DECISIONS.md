@@ -214,11 +214,55 @@
     - Created `SaveStatusIndicator` to show “Saved just now / X minutes ago” next to the “Add Address” action; also wrote interface testing to know it correctly displays the right message.
     - Cleared the persisted store key between tests and extended the shared test utilities so the new state shape (`addresses` + `lastSaved`) remains isolated per suite.
 
-### Feature 5: [Name]
+### Feature 5: 1 piece of [Dynamic Address Management], **UX Polish** --> Toast Notifications
+- **Why I chose this**:
+    This would be the final detail missing for implementing the dynamic address management. Toast notifications are a well-established UI pattern for providing user feedback, so implementation would be straightforward. The majority of time was spent evaluating whether to build a custom toast component or leverage an existing library. After research, I chose Sonner for its Tailwind-native integration, zero configuration, and alignment with shadcn/ui patterns. Other options considered included react-hot-toast (more setup, older patterns) and @radix-ui/react-toast (verbose, requires manual styling), but Sonner's minimal footprint (~3kb gzipped) and automatic dark mode support made it the clear choice.
+
+- **Time spent**:
+    - ~50 minutes [feat/add-toast](https://github.com/jbrmaiden/trm-frontend-test/pull/9)
+
+- **Challenges faced**:
+    #### [feat/add-toast](https://github.com/jbrmaiden/trm-frontend-test/pull/9)
+    1. **False negative error toasts with retry logic**: Initially, I implemented error toasts directly in the `useBalance` and `usePrice` hooks. However, this approach caused false negatives—error toasts would display even when subsequent retries successfully fetched the data. Since the hooks have built-in retry logic (3 attempts with exponential backoff), the toast would fire on the first failure before the retry could succeed. The solution was to move error toast handling to the component level (`AddressCard`), where we can react to the final error state after all retries have been exhausted.
+
+    2. **Test isolation with sonner**: Needed to mock the `sonner` module in tests to verify toast calls without rendering actual toast components. This required updating the test utilities to include the `<Toaster />` component and creating consistent mock patterns across all test files.
+
+- **Key decisions**:
+    #### [feat/add-toast](https://github.com/jbrmaiden/trm-frontend-test/pull/9)
+    1. **Library choice - Sonner**:
+        - Official recommendation for shadcn/ui projects
+        - Zero configuration—just add `<Toaster />` component to App.tsx
+        - Works with existing Tailwind CSS theme variables
+        - Type-safe API: `toast.success()`, `toast.error()`, `toast.info()`
+        - No provider wrapping needed, purely additive with no conflicts
+
+    2. **Success toasts for user actions**:
+        - Add address: `toast.success('Address added', { description: 'Now monitoring 0x1234...' })`
+        - Remove address: `toast.success('Address removed', { description: 'Stopped monitoring 0x1234...' })`
+        - Essential because dialogs close after action—user needs feedback confirmation
+
+    3. **Error handling**:
+        - **Validation errors**: Keep inline form errors (immediate feedback) without redundant toasts
+        - **API errors**: Handled at component level after retries exhausted, avoiding false negatives
+        - **Existing inline indicators**: Kept badges/alerts in `AddressCard` for redundancy
+
+    4. **Toast Test mock**:
+        - Allows verification of toast calls: `expect(toast.success).toHaveBeenCalledWith(...)`
+        - Updated `test-utils.tsx` to include `<Toaster />` in test wrapper
+
+
+### Feature 6: [Name]
 - **Why I chose this**: 
 - **Time spent**: 
 - **Challenges faced**: 
 - **Key decisions**: 
+
+### Feature 7: [Name]
+- **Why I chose this**: 
+- **Time spent**: 
+- **Challenges faced**: 
+- **Key decisions**: 
+
 ## Technical Approach
 
 ### Architecture Decisions
@@ -255,6 +299,7 @@
     - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 20 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
     - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 10 minutes
+    - [feat/add-toast](https://github.com/jbrmaiden/trm-frontend-test/pull/9) 20 minutes
 
 - **Implementation**: 
     - [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 57 minutes
@@ -263,6 +308,7 @@
     - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 15 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 20 minutes
     - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 10 minutes
+    - [feat/add-toast](https://github.com/jbrmaiden/trm-frontend-test/pull/9): 15 minutes
 
 - **Testing**: 
     - [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
@@ -271,6 +317,7 @@
     - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 5 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
     - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 5 minutes
+    - [feat/add-toast](https://github.com/jbrmaiden/trm-frontend-test/pull/9): 10 minutes
 
 - **Polish/Documentation**: 
     - [feat/testing-setup](https://github.com/jbrmaiden/trm-frontend-test/pull/3): 20 minutes
@@ -279,6 +326,7 @@
     - [feat/remove-address](https://github.com/jbrmaiden/trm-frontend-test/pull/6): 5 minutes
     - [feat/remove-dialog-confirmation](https://github.com/jbrmaiden/trm-frontend-test/pull/7): 10 minutes
     - [feat/persist-addresses](https://github.com/jbrmaiden/trm-frontend-test/pull/8): 5 minutes
+    - [feat/add-toast](https://github.com/jbrmaiden/trm-frontend-test/pull/9) 5 minutes
 
 - **Total**: X minutes
 
