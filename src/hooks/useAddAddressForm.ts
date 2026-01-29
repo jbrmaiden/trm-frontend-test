@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { toast } from 'sonner';
 import { useSanctionedStore } from '@/stores/sanctionedStore';
 import { ethereumAddressSchema } from '@/components/AddAddressDialog/validation';
 
@@ -58,7 +59,9 @@ export function useAddAddressForm(): UseAddAddressFormReturn {
     // Validate with Zod
     const result = ethereumAddressSchema.safeParse(address);
     if (!result.success) {
-      setError(result.error.issues[0].message);
+      const errorMessage = result.error.issues[0].message;
+      setError(errorMessage);
+      toast.error('Invalid address', { description: errorMessage });
       setIsSubmitting(false);
       return;
     }
@@ -72,13 +75,18 @@ export function useAddAddressForm(): UseAddAddressFormReturn {
     );
 
     if (isDuplicate) {
-      setError('This address is already being monitored');
+      const errorMessage = 'This address is already being monitored';
+      setError(errorMessage);
+      toast.error('Duplicate address', { description: errorMessage });
       setIsSubmitting(false);
       return;
     }
 
     // Add normalized address to store
     addAddress(normalizedAddress);
+    toast.success('Address added', {
+      description: `Now monitoring ${normalizedAddress.slice(0, 10)}...${normalizedAddress.slice(-8)}`,
+    });
 
     // Success: close dialog and reset form
     setIsSubmitting(false);

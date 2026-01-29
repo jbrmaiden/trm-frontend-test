@@ -27,7 +27,7 @@ Implement the ability to add and remove addresses dynamically:
 - **Remove Address**: Delete button on each address card (done)
 - **Persistence**: Save address list to localStorage (done)
 - **Validation**: Prevent duplicates and invalid addresses (done)
-- **UX Polish**: Success/error notifications for add/remove actions
+- **UX Polish**: Success/error notifications for add/remove actions (done)
 
 **Bonus**: Import addresses from CSV or batch add multiple addresses
 

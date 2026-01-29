@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useBalance } from '../../hooks/useBalance';
 import { useSanctionedStore } from '@/stores/sanctionedStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,6 +34,16 @@ function AddressCard({ address, ethPrice }: AddressCardProps) {
   const removeAddress = useSanctionedStore((s) => s.removeAddress);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  // Show toast when balance error occurs
+  useEffect(() => {
+    if (error) {
+      toast.error('Failed to fetch balance', {
+        id: `balance-error-${address}`,
+        description: `Could not load balance for ${address.slice(0, 10)}...`,
+      });
+    }
+  }, [error, address]);
+
   // Calculate formatted values
   const eth = data ? new BigNumber(data).toFormat(6) : '—';
   const usd = data ? new BigNumber(data).multipliedBy(ethPrice).toFormat(2) : '—';
@@ -40,6 +51,9 @@ function AddressCard({ address, ethPrice }: AddressCardProps) {
   function handleRemove() {
     removeAddress(address);
     setIsDialogOpen(false);
+    toast.success('Address removed', {
+      description: `Stopped monitoring ${address.slice(0, 10)}...${address.slice(-8)}`,
+    });
   }
 
   function handleCancel() {

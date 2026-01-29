@@ -1,7 +1,18 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act } from '@testing-library/react';
+import { toast } from 'sonner';
 import { renderHook, clearTestAddresses, setTestAddresses, getTestAddresses } from '@/test/test-utils';
 import { useAddAddressForm } from '../useAddAddressForm';
+
+// Mock sonner
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+  },
+  Toaster: () => null,
+}));
 
 const VALID_ADDRESS = '0x1234567890123456789012345678901234567890';
 const VALID_ADDRESS_MIXED_CASE = '0xAbCdEf1234567890AbCdEf1234567890AbCdEf12';
@@ -16,6 +27,7 @@ const createMockEvent = () => ({ preventDefault: () => {} } as React.FormEvent);
 describe('useAddAddressForm', () => {
   beforeEach(() => {
     clearTestAddresses();
+    vi.clearAllMocks();
   });
 
   describe('Initial State', () => {
@@ -352,6 +364,114 @@ describe('useAddAddressForm', () => {
       });
 
       expect(result.current.isSubmitting).toBe(false);
+    });
+  });
+
+  describe('Toast Notifications', () => {
+    it('shows success toast when address is added successfully', async () => {
+      const { result } = renderHook(() => useAddAddressForm());
+
+      act(() => {
+        result.current.setIsOpen(true);
+        result.current.setAddress(VALID_ADDRESS);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit(createMockEvent());
+      });
+
+      expect(toast.success).toHaveBeenCalledWith('Address added', {
+        description: expect.stringContaining('Now monitoring'),
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('shows error toast on validation failure (empty input)', async () => {
+      const { result } = renderHook(() => useAddAddressForm());
+
+      act(() => {
+        result.current.setIsOpen(true);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit(createMockEvent());
+      });
+
+      expect(toast.error).toHaveBeenCalledWith('Invalid address', {
+        description: 'Enter a valid Ethereum address starting with 0x',
+      });
+      expect(toast.success).not.toHaveBeenCalled();
+    });
+
+    it('shows error toast on validation failure (invalid format)', async () => {
+      const { result } = renderHook(() => useAddAddressForm());
+
+      act(() => {
+        result.current.setIsOpen(true);
+        result.current.setAddress(INVALID_ADDRESS_SHORT);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit(createMockEvent());
+      });
+
+      expect(toast.error).toHaveBeenCalledWith('Invalid address', {
+        description: expect.any(String),
+      });
+      expect(toast.success).not.toHaveBeenCalled();
+    });
+
+    it('shows error toast when address is a duplicate', async () => {
+      setTestAddresses([VALID_ADDRESS.toLowerCase()]);
+      const { result } = renderHook(() => useAddAddressForm());
+
+      act(() => {
+        result.current.setIsOpen(true);
+        result.current.setAddress(VALID_ADDRESS);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit(createMockEvent());
+      });
+
+      expect(toast.error).toHaveBeenCalledWith('Duplicate address', {
+        description: 'This address is already being monitored',
+      });
+      expect(toast.success).not.toHaveBeenCalled();
+    });
+
+    it('does not show toast when cancel is clicked', () => {
+      const { result } = renderHook(() => useAddAddressForm());
+
+      act(() => {
+        result.current.setIsOpen(true);
+        result.current.setAddress(VALID_ADDRESS);
+      });
+
+      act(() => {
+        result.current.handleCancel();
+      });
+
+      expect(toast.success).not.toHaveBeenCalled();
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('includes truncated address in success toast description', async () => {
+      const { result } = renderHook(() => useAddAddressForm());
+      const normalizedAddress = VALID_ADDRESS.toLowerCase();
+
+      act(() => {
+        result.current.setIsOpen(true);
+        result.current.setAddress(VALID_ADDRESS);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit(createMockEvent());
+      });
+
+      expect(toast.success).toHaveBeenCalledWith('Address added', {
+        description: `Now monitoring ${normalizedAddress.slice(0, 10)}...${normalizedAddress.slice(-8)}`,
+      });
     });
   });
 });
