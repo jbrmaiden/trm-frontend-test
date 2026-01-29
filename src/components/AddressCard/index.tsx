@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useBalance } from '../../hooks/useBalance';
 import { useSanctionedStore } from '@/stores/sanctionedStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,6 +41,9 @@ function AddressCard({ address, ethPrice }: AddressCardProps) {
   function handleRemove() {
     removeAddress(address);
     setIsDialogOpen(false);
+    toast.success('Address removed', {
+      description: `Stopped monitoring ${address.slice(0, 10)}...${address.slice(-8)}`,
+    });
   }
 
   function handleCancel() {

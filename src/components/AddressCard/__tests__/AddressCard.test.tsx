@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { toast } from 'sonner';
 import {
   render,
   setTestAddresses,
@@ -11,6 +12,16 @@ import {
 } from '@/test/test-utils';
 import AddressCard from '../index';
 
+// Mock sonner
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+  },
+  Toaster: () => null,
+}));
+
 const TEST_ADDRESS = '0x1234567890123456789012345678901234567890';
 const TEST_ETH_PRICE = 2000;
 
@@ -18,6 +29,7 @@ describe('AddressCard', () => {
   beforeEach(() => {
     setTestAddresses([TEST_ADDRESS]);
     server.resetHandlers();
+    vi.clearAllMocks();
   });
 
   describe('Rendering Tests', () => {
@@ -356,6 +368,83 @@ describe('AddressCard', () => {
         const indicator = screen.getByTitle('Data loaded successfully');
         expect(indicator).toBeInTheDocument();
       });
+    });
+  });
+
+  describe('Toast Notifications', () => {
+    it('shows success toast when address is removed', async () => {
+      const user = userEvent.setup();
+      server.use(mockBalanceSuccess({ [TEST_ADDRESS]: '1000000000000000000' }));
+      render(<AddressCard address={TEST_ADDRESS} ethPrice={TEST_ETH_PRICE} />);
+
+      // Open dialog
+      await user.click(
+        screen.getByRole('button', { name: `Remove address ${TEST_ADDRESS}` })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+      });
+
+      // Click Remove
+      const dialog = screen.getByRole('alertdialog');
+      await user.click(within(dialog).getByRole('button', { name: /^remove$/i }));
+
+      // Verify toast was called
+      await waitFor(() => {
+        expect(toast.success).toHaveBeenCalledWith('Address removed', {
+          description: expect.stringContaining('Stopped monitoring'),
+        });
+      });
+    });
+
+    it('includes truncated address in success toast description', async () => {
+      const user = userEvent.setup();
+      server.use(mockBalanceSuccess({ [TEST_ADDRESS]: '1000000000000000000' }));
+      render(<AddressCard address={TEST_ADDRESS} ethPrice={TEST_ETH_PRICE} />);
+
+      // Open dialog
+      await user.click(
+        screen.getByRole('button', { name: `Remove address ${TEST_ADDRESS}` })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+      });
+
+      // Click Remove
+      const dialog = screen.getByRole('alertdialog');
+      await user.click(within(dialog).getByRole('button', { name: /^remove$/i }));
+
+      // Verify toast was called with truncated address
+      await waitFor(() => {
+        expect(toast.success).toHaveBeenCalledWith('Address removed', {
+          description: `Stopped monitoring ${TEST_ADDRESS.slice(0, 10)}...${TEST_ADDRESS.slice(-8)}`,
+        });
+      });
+    });
+
+    it('does not show toast when Cancel is clicked', async () => {
+      const user = userEvent.setup();
+      server.use(mockBalanceSuccess({ [TEST_ADDRESS]: '1000000000000000000' }));
+      render(<AddressCard address={TEST_ADDRESS} ethPrice={TEST_ETH_PRICE} />);
+
+      // Open dialog
+      await user.click(
+        screen.getByRole('button', { name: `Remove address ${TEST_ADDRESS}` })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+      });
+
+      // Click Cancel
+      const dialog = screen.getByRole('alertdialog');
+      await user.click(within(dialog).getByRole('button', { name: /cancel/i }));
+
+      // Verify no toast was called
+      expect(toast.success).not.toHaveBeenCalled();
+      expect(toast.error).not.toHaveBeenCalled();
     });
   });
 });
